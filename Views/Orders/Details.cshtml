@@ -1,0 +1,53 @@
+@{
+    ViewData["Title"] = "Details";
+}
+
+
+@model OrderViewModel
+
+<h2>Order Details</h2>
+<h4>Order</h4>
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">ID</dt>
+        <dd class="col-sm-10">@Model.Id</dd>
+
+        <dt class="col-sm-2">Customer Name</dt>
+        <dd class="col-sm-10">@Model.CustomerName</dd>
+
+        <dt class="col-sm-2">Order Date</dt>
+        <dd class="col-sm-10">@Model.OrderDate.ToShortDateString()</dd>
+    </dl>
+    <h4>Order Details</h4>
+
+    @if (Model.OrderDetails != null && Model.OrderDetails.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var detail in Model.OrderDetails)
+                {
+                    <tr>
+                        <td>@detail.ProductName</td>
+                        <td>@detail.Quantity</td>
+                        <td>@detail.UnitPrice</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No details available.</p>
+    }
+
+
+    <a asp-action="Index" class="btn btn-secondary">Back to list</a>
+
+</div>

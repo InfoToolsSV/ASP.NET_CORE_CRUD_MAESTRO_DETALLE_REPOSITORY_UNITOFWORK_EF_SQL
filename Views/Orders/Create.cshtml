@@ -1,0 +1,119 @@
+@{
+    ViewData["Title"] = "Create";
+}
+@model OrderViewModel
+
+<h2>Create Order</h2>
+
+<form asp-action="Create">
+    <div class="form-group">
+        <label asp-for="CustomerName" class="form-label">Customer Name</label>
+        <input asp-for="CustomerName" class="form-control" placeholder="Enter customer name" />
+        <span asp-validation-for="CustomerName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="OrderDate" class="form-label">OrderDate</label>
+        <input asp-for="OrderDate" class="form-control" type="date" value="0" />
+        <span asp-validation-for="OrderDate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label class="form-label">Order Details</label>
+        <div id="orderDetailsContainer">
+            @if (Model.OrderDetails != null && Model.OrderDetails.Any())
+            {
+                @for (var i = 0; i < Model.OrderDetails.Count; i++)
+                {
+                    <div class="form-row mb-3" id="detailRow_@i">
+                        <input type="hidden" name="OrderDetails[@i].Id" value="@Model.OrderDetails[i].Id" />
+                        <div class="col">
+                            <input asp-for="OrderDetails[@i].ProductName" class="form-control" placeholder="Product Name" />
+                            <span asp-validation-for="OrderDetails[@i].ProductName" class="text-danger"></span>
+                        </div>
+                        <div class="col">
+                            <input asp-for="OrderDetails[@i].Quantity" class="form-control" placeholder="Quantity" type="number"
+                                min="1" />
+                            <span asp-validation-for="OrderDetails[@i].Quantity" class="text-danger"></span>
+                        </div>
+                        <div class="col">
+                            <input asp-for="OrderDetails[@i].UnitPrice" class="form-control" placeholder="UnitPrice"
+                                type="number" step="0.01" min="0" />
+                            <span asp-validation-for="OrderDetails[@i].UnitPrice" class="text-danger"></span>
+                        </div>
+                        <div class="col">
+                            <button type="button" class="btn btn-danger" onclick="removeDetail(@i)">Remove</button>
+                        </div>
+
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="form-row mb-3" id="detailRow_0">
+                    <input type="hidden" name="OrderDetails[0].Id" value="0" />
+                    <div class="col">
+                        <input name="OrderDetails[0].ProductName" class="form-control" placeholder="Product Name" />
+                        <span asp-validation-for="OrderDetails[0].ProductName" class="text-danger"></span>
+                    </div>
+                    <div class="col">
+                        <input name="OrderDetails[0].Quantity" class="form-control" placeholder="Quantity" type="number"
+                            min="1" />
+                        <span asp-validation-for="OrderDetails[0].Quantity" class="text-danger"></span>
+                    </div>
+                    <div class="col">
+                        <input name="OrderDetails[0].UnitPrice" class="form-control" placeholder="UnitPrice" type="number"
+                            step="0.01" min="0" />
+                        <span asp-validation-for="OrderDetails[0].UnitPrice" class="text-danger"></span>
+                    </div>
+                    <div class="col">
+                        <button type="button" class="btn btn-danger" onclick="removeDetail(0)">Remove</button>
+                    </div>
+
+                </div>
+            }
+        </div>
+        <button type="button" class="btn btn-outline-primary mt-2" onclick="addDetail()">Add Detail</button>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Create Order</button>
+        <a asp-action="Index" class="btn btn-secondary">Back to list</a>
+    </div>
+</form>
+
+<script>
+    function addDetail() {
+        let container = document.getElementById('orderDetailsContainer');
+        let index = container.children.length;
+        let html = `<div class="form-row mb-3" id="detailRow_${index}">
+                    <input type="hidden" name="OrderDetails[${index}].Id" value="0" />
+                    <div class="col">
+                        <input name="OrderDetails[${index}].ProductName" class="form-control" placeholder="Product Name" />
+                        <span asp-validation-for="OrderDetails[${index}].ProductName" class="text-danger"></span>
+                    </div>
+                    <div class="col">
+                        <input name="OrderDetails[${index}].Quantity" class="form-control" placeholder="Quantity" type="number"
+                            min="1" />
+                        <span asp-validation-for="OrderDetails[${index}].Quantity" class="text-danger"></span>
+                    </div>
+                    <div class="col">
+                        <input name="OrderDetails[${index}].UnitPrice" class="form-control" placeholder="UnitPrice" type="number"
+                            step="0.01" min="0" />
+                        <span asp-validation-for="OrderDetails[${index}].UnitPrice" class="text-danger"></span>
+                    </div>
+                    <div class="col">
+                        <button type="button" class="btn btn-danger" onclick="removeDetail(${index})">Remove</button>
+                    </div>
+
+                </div>`;
+                container.insertAdjacentHTML('beforeend', html);
+    }
+
+    function removeDetail(index)
+    {
+        let row = document.getElementById(`detailRow_${index}`);
+        if(row)
+        {
+            row.remove();
+        }
+    }
+</script>

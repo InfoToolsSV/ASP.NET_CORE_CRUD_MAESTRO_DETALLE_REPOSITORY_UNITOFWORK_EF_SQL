@@ -1,0 +1,115 @@
+@{
+    ViewData["Title"] = "Edit";
+}
+
+
+@model OrderViewModel
+
+<h2>Edit Order</h2>
+
+<form asp-action="Edit">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label asp-for="CustomerName" class="form-label">Customer Name</label>
+        <input asp-for="CustomerName" class="form-control" placeholder="Enter customer name" />
+        <span asp-validation-for="CustomerName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="OrderDate" class="form-label">OrderDate</label>
+        <input asp-for="OrderDate" class="form-control" type="date" />
+        <span asp-validation-for="OrderDate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label class="form-label">Order Details</label>
+        <div id="orderDetailsContainer">
+            @if (Model.OrderDetails != null && Model.OrderDetails.Any())
+            {
+                @for (var i = 0; i < Model.OrderDetails.Count; i++)
+                {
+                    <div class="form-row mb-3" id="detail-@Model.OrderDetails[i].Id">
+                        <input type="hidden" name="OrderDetails[@i].Id" value="@Model.OrderDetails[i].Id" />
+                        <input type="hidden" name="OrderDetails[@i].IsDeleted" value="false" />
+                        <div class="col">
+                            <input name="OrderDetails[@i].ProductName" value="@Model.OrderDetails[i].ProductName"
+                                class="form-control" placeholder="Product Name" />
+                            <span asp-validation-for="OrderDetails[@i].ProductName" class="text-danger"></span>
+                        </div>
+                        <div class="col">
+                            <input name="OrderDetails[@i].Quantity" value="@Model.OrderDetails[i].Quantity" class="form-control"
+                                placeholder="Quantity" type="number" min="1" />
+                            <span asp-validation-for="OrderDetails[@i].Quantity" class="text-danger"></span>
+                        </div>
+                        <div class="col">
+                            <input name="OrderDetails[@i].UnitPrice" value="@Model.OrderDetails[i].UnitPrice"
+                                class="form-control" placeholder="Unit Price" type="number" step="0.01" min="0" />
+                            <span asp-validation-for="OrderDetails[@i].UnitPrice" class="text-danger"></span>
+                        </div>
+                        <div class="col">
+                            <button type="button" class="btn btn-danger btn-sm" onclick="removeDetail(this)">Remove</button>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="form-row mb-3">
+                    <div class="col">
+                        <input name="OrderDetails[0].ProductName" class="form-control" placeholder="Product Name" />
+                    </div>
+                    <div class="col">
+                        <input name="OrderDetails[0].Quantity" class="form-control" placeholder="Quantity" type="number"
+                            min="1" />
+                    </div>
+                    <div class="col">
+                        <input name="OrderDetails[0].UnitPrice" class="form-control" placeholder="Unit Price" type="number"
+                            step="0.01" min="0" />
+                    </div>
+                    <div class="col">
+                        <button type="button" class="btn btn-danger btn-sm" onclick="removeDetail(this)">Remove</button>
+                    </div>
+                </div>
+            }
+        </div>
+        <button type="button" class="btn btn-outline-primary mt-2" onclick="addDetail()">Add Detail</button>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Save changes</button>
+        <a asp-action="Index" class="btn btn-secondary">Back to list</a>
+    </div>
+</form>
+
+<script>
+    function addDetail() {
+        let container = document.getElementById('orderDetailsContainer');
+        let index = container.children.length;
+        let html = `
+            <div class="form-row mb-3">
+                <input name="OrderDetails[${index}].Id" type="hidden" value="0" />
+                <div class="col">
+                    <input name="OrderDetails[${index}].ProductName" class="form-control" placeholder="Product Name" />
+                </div>
+                <div class="col">
+                    <input name="OrderDetails[${index}].Quantity" class="form-control" placeholder="Quantity" type="number" min="1" />
+                </div>
+                <div class="col">
+                    <input name="OrderDetails[${index}].UnitPrice" class="form-control" placeholder="Unit Price" type="number" step="0.01" min="0" />
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removeDetail(this)">Remove</button>
+                </div>
+            </div>`;
+        container.insertAdjacentHTML('beforeend', html);
+    }
+
+    function removeDetail(button) {
+
+        const row = button.closest('.form-row');
+        const hiddeniInput = row.querySelector('input[name$=".IsDeleted"]');
+        if (hiddeniInput) {
+            hiddeniInput.value = true;
+        }
+        row.style.display = 'none';
+    }
+</script>
